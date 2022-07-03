@@ -349,10 +349,9 @@ diff@^4.0.1:
   resolved "https://registry.yarnpkg.com/diff/-/diff-4.0.2.tgz#60f3aecb89d5fae520c11aa19efc2bb982aade7d"
   integrity sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==
 
-discord-akairo@^8.1.0:
+discord-akairo@discord-akairo/discord-akairo:
   version "8.1.0"
-  resolved "https://registry.yarnpkg.com/discord-akairo/-/discord-akairo-8.1.0.tgz#9f3d910e12c197d40d3522a3a93679e2a746a6ca"
-  integrity sha512-INWYmHo6NgyYx1ZKGSCmgznVfvkXpWGj4fGCGjO8IPkZ06Bidb9YKr4rXy2lwG0kprCjvqY0qbbhcw6N050abQ==
+  resolved "https://codeload.github.com/discord-akairo/discord-akairo/tar.gz/905f69382957023601ebbb6f8a3a8b6b0f615bd1"
 
 discord-api-types@^0.33.3:
   version "0.33.5"

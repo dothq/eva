@@ -12,7 +12,7 @@
     "dependencies": {
         "axios": "^0.27.2",
         "better-sqlite3": "^7.5.3",
-        "discord-akairo": "^8.1.0",
+        "discord-akairo": "discord-akairo/discord-akairo",
         "discord.js": "^13.8.1",
         "dotenv": "^16.0.1",
         "fs-extra": "^10.1.0",
