@@ -7,10 +7,10 @@ class Eva extends AkairoClient {
     commandHandler: Akairo.CommandHandler;
     constructor() {
         super({
-            intents: ["GUILDS"],
+            intents: 131071,
         });
         this.commandHandler = new CommandHandler(this, {
-            directory: "./commands/",
+            directory: "./src/commands/",
             prefix: "-",
         });
         this.commandHandler.loadAll();
