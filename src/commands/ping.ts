@@ -1,4 +1,5 @@
 import Akairo from "discord-akairo";
+import type { Message } from "discord.js";
 
 class PingCommand extends Akairo.Command {
     constructor() {
@@ -9,7 +10,7 @@ class PingCommand extends Akairo.Command {
             ratelimit: 3,
         });
     }
-    exec(message: { reply: (arg0: string) => any }) {
+    exec(message: Message) {
         return message.reply("Pong!");
     }
 }
