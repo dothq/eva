@@ -12,14 +12,14 @@
     "dependencies": {
         "axios": "^0.27.2",
         "better-sqlite3": "^7.5.3",
+        "discord-akairo": "^8.1.0",
         "discord.js": "^13.8.1",
         "dotenv": "^16.0.1",
         "fs-extra": "^10.1.0",
         "glob": "^8.0.3",
         "knex": "^2.1.0",
         "pino": "^8.1.0",
-        "pino-pretty": "^8.1.0",
-        "slashasaurus": "^0.10.4"
+        "pino-pretty": "^8.1.0"
     },
     "devDependencies": {
         "@types/better-sqlite3": "^7.5.0",

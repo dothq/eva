@@ -3,5 +3,6 @@ import { config } from "dotenv";
 
 config();
 
-const bot = new Eva();
-bot.login(process.env.TOKEN);
+const eva = new Eva();
+
+eva.login(process.env.TOKEN);
