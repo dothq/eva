@@ -1,17 +1,17 @@
-import { SlashCommand } from "slashasaurus";
+import Akairo from "discord-akairo";
 
-export default new SlashCommand(
-    {
-        name: "ping",
-        description: "Pings the bot to make sure everything is working",
-        options: [],
-    },
-    {
-        run: (interaction) => {
-            interaction.reply({
-                content: `Pong!`,
-                ephemeral: true,
-            });
-        },
+class PingCommand extends Akairo.Command {
+    constructor() {
+        super("ping", {
+            aliases: ["ping"],
+            category: "general",
+            description: "Pong!",
+            ratelimit: 3,
+        });
     }
-);
+    exec(message: { reply: (arg0: string) => any }) {
+        return message.reply("Pong!");
+    }
+}
+
+export default PingCommand;
