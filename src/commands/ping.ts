@@ -1,18 +1,11 @@
-import Akairo from "discord-akairo";
-import type { Message } from "discord.js";
+import Command from ".";
 
-class PingCommand extends Akairo.Command {
-    constructor() {
+class PingCommand extends Command {
+    public constructor() {
         super("ping", {
-            aliases: ["ping"],
-            category: "general",
-            description: "Pong!",
-            ratelimit: 3,
+            description: "Ping fuck off"
         });
-    }
-    exec(message: Message) {
-        return message.reply("Pong!");
     }
 }
 
-export default PingCommand;
+export default new PingCommand();
