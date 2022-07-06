@@ -2,17 +2,18 @@ import { MessageEmbed } from "discord.js";
 import Command, { Ctx } from ".";
 import { accentColour } from "../main";
 
-class PingCommand extends Command {
+class AvatarCommand extends Command {
     public constructor() {
-        super("ping", {
-            description: "🏓 Check the bot's response time"
+        super("avatar", {
+            description: "🖼️ Set the bot's avatar - (Administrative)",
+            owner: true
         });
     }
 
     public async exec(ctx: Ctx) {
         const embed = new MessageEmbed()
             .setColor(accentColour)
-            .setDescription(`🏓 ${Date.now() - ctx.createdTimestamp}ms\n💗 ${Math.round(ctx.client.ws.ping)}ms`)
+            .setDescription(`bing bong`)
 
         ctx.reply({
             embeds: [embed],
@@ -21,4 +22,4 @@ class PingCommand extends Command {
     }
 }
 
-export default new PingCommand();
+export default new AvatarCommand();
