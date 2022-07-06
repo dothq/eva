@@ -6,6 +6,7 @@ import { readdirSync } from "fs";
 import { glob } from "glob";
 import { resolve } from "path";
 import pino from "pino";
+import Command from "./commands";
 
 const log = pino({
     transport: {
@@ -21,17 +22,28 @@ const main = async () => {
         .setToken(process.env.TOKEN as string);
 
     const commands = readdirSync(resolve(__dirname, "commands")).filter(c => c !== "index.ts");
-    const cmds = [];
+    const cmds: Command[] = [];
+    const safeCmds: Command[] = [];
 
     for await (const cmd of commands) {
-        const { default: mod } = await import(resolve(__dirname, "commands", cmd));
+        let { default: mod } = await import(resolve(__dirname, "commands", cmd));
+
+        delete mod.options;
 
         cmds.push(mod);
+
+        for (const [key] of Object.entries(mod)) {
+            if (typeof mod[key] == "function") {
+                delete mod[key];
+            }
+        }
+
+        safeCmds.push(mod);
     }
 
     try {
         log.info("Started refreshing application (/) commands.");
-        await rest.put(Routes.applicationCommands("993177336939810906"), { body: cmds });
+        await rest.put(Routes.applicationCommands("993177336939810906"), { body: safeCmds });
         log.info("Successfully reloaded application (/) commands.");
     } catch (error) {
         log.error(error);
@@ -43,8 +55,11 @@ const main = async () => {
       
       
     client.on("interactionCreate", async (interaction: Interaction) => {
-        if (interaction.isCommand() || interaction.isContextMenu()) {
-            interaction.reply(interaction.commandName);
+        if (interaction.isCommand()) {
+            const cmd = cmds.find(c => c.name == interaction.commandName);
+            if (!cmd) return;
+
+            await cmd.exec(interaction);
         }
     })
       
