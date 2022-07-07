@@ -1,8 +1,8 @@
 import { MessageEmbed } from "discord.js";
-import Command, { Ctx } from ".";
-import { accentColour } from "../main";
+import { ChatCommand, Ctx } from "..";
+import { accentColour } from "../../main";
 
-class PingCommand extends Command {
+class PingCommand extends ChatCommand {
     public constructor() {
         super("ping", {
             description: "🏓 Check the bot's response time"

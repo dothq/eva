@@ -1,10 +1,15 @@
 import { APIApplicationCommandOption, APIMessage } from "discord-api-types/v10";
-import { BaseCommandInteraction, InteractionReplyOptions, Message, PermissionFlags, Permissions } from "discord.js";
+import { BaseCommandInteraction, ContextMenuInteraction, Interaction, InteractionReplyOptions, Message, MessageContextMenuInteraction, PermissionFlags, Permissions } from "discord.js";
 import { l10n, log } from "../main";
 import { replyWithError } from "../util/error";
-import { swapKVObject } from "../util/obj";
 
-export type Ctx = BaseCommandInteraction;
+export type Ctx = BaseCommandInteraction & MessageContextMenuInteraction & ContextMenuInteraction;
+
+enum CommandType {
+    Chat = 1,
+    User = 2,
+    Message = 3
+}
 
 class Command {
     /* 
@@ -13,13 +18,15 @@ class Command {
 
         Structure: https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-structure
     */
-    public description: string = "No description";
+    public description!: string;
     public permissions: string[] = [];
     public args: APIApplicationCommandOption[] = [];
 
-    public constructor(public name: string, public $commandInit: Partial<Command>) {
-        for (const [key, value] of Object.entries($commandInit)) {
-            (this as any)[key] = value;
+    public constructor(public type: CommandType, public name: string, public $commandInit?: Partial<Command>) {
+        if ($commandInit) {
+            for (const [key, value] of Object.entries($commandInit)) {
+                (this as any)[key] = value;
+            }
         }
     }
 
@@ -61,6 +68,7 @@ class Command {
 }
 
 interface Command {
+    type: CommandType;
     name: string;
     description: string;
     permissions: string[];
@@ -69,5 +77,27 @@ interface Command {
     exec(ctx: Ctx): Promise<void>;
 }
 
+class ChatCommand extends Command {
+    public constructor(public name: string, public $commandInit?: Partial<Command>) {
+        super(CommandType.Chat, name, $commandInit);
+    }
+}
 
-export default Command;
+class UserCommand extends Command {
+    public constructor(public name: string, public $commandInit?: Partial<Command>) {
+        super(CommandType.User, name, $commandInit);
+    }
+}
+
+class MessageCommand extends Command {
+    public constructor(public name: string, public $commandInit?: Partial<Command>) {
+        super(CommandType.Message, name, $commandInit);
+    }
+}
+
+export {
+    Command,
+    ChatCommand,
+    UserCommand,
+    MessageCommand
+};

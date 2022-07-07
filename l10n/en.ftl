@@ -13,7 +13,20 @@ error-option-parse-failed = Failed to parse option.
 error-no-permission-single = The { $permission } permission is required to use this command.
 error-no-permission-multiple = The { $permission } permissions are required to use this command.
 
+error-unknown-message = Unable to locate message.
+
+# Updates
+updated-username-message = Successfully updated username to { $botname }.
 updated-avatar-message = Successfully updated { $botname }'s avatar.
+
+# Confirmation
+confirm-report-title-msg = Report this message?
+confirm-report-description-msg = Are you sure you want to report this message?
+confirm-report-msg-content-field-msg = 💬 Message Content
+confirm-report-msg-sent-field-msg = 📨 Sent
+confirm-report-msg-id-field-msg = 🆔 ID
+confirm-report-msg-attachments-field-msg = 📎 Attachments
+confirm-report-author-footer-msg = Author: { $tag } ({ $id })
 
 # Permissions
 permission-create-instant-invite = Create Invite
