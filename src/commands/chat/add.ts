@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ApplicationCommandOptionType } from "discord-api-types/v10";
-import { MessageEmbed, User } from "discord.js";
+import { MessageEmbed, User, VoiceChannel } from "discord.js";
 import { ChatCommand, Ctx } from "..";
 import { accentColour, calculateDominantColour, l10n, realmCategoryId } from "../../main";
 import { replyWithError } from "../../util/error";
@@ -37,7 +37,13 @@ class AddCommand extends ChatCommand {
 
         const embed = new MessageEmbed()
             .setColor(accentColour)
-            .setTitle("👍️ " + l10n.t(ctx, "realms-added-user", { username: ctx.user.username }))
+            .setTitle("👍️ " + l10n.t(ctx, "realms-added-user", { username: user.username }));
+
+        const m = (vc as VoiceChannel).send({
+            content: `<@${user.id}>`
+        });
+
+        (await m).delete();
 
         ctx.reply({
             embeds: [embed],

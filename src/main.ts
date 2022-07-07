@@ -49,8 +49,10 @@ const checkRealmCategoryForEmptyChannels = async (client: Client) => {
         const category = await client.channels.fetch(realmCategoryId) as CategoryChannel;
 
         category.children.forEach(async c => {
-            if (c.type == "GUILD_VOICE" && !c.members.size) {
-                await c.delete();
+            if (c.type == "GUILD_VOICE" && !c.members.size && c.deletable) {
+                try {
+                    await c.delete();
+                } catch (e) {}
             }
         })
     } catch(e) {}
@@ -183,7 +185,7 @@ const main = async () => {
         client.on("voiceStateUpdate", async (oldstate, state) => {
             await checkRealmCategoryForEmptyChannels(client);
 
-            if (!oldstate.channelId && state.channelId == realmVoiceChannelId) {
+            if (state.channelId == realmVoiceChannelId) {
                 const category = await state.guild.channels.fetch(realmCategoryId) as CategoryChannelResolvable;
 
                 const vc = await state.guild.channels.create(`${state.member?.user.username}'s space`, { 
