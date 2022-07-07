@@ -59,6 +59,10 @@ class AvatarCommand extends ChatCommand {
             return replyWithError(ctx, "no-option-picked").send();
         }
 
+        if (!file_url.length) {
+            return replyWithError(ctx, "no-option-picked").send();
+        }
+
         try {
             const res = await axios.get(file_url, { responseType: "arraybuffer" });
             file_buffer = res.data;

@@ -15,18 +15,24 @@ error-no-permission-multiple = The { $permission } permissions are required to u
 
 error-unknown-message = Unable to locate message.
 
-# Updates
+# Updates to identity
 updated-username-message = Successfully updated username to { $botname }.
 updated-avatar-message = Successfully updated { $botname }'s avatar.
 
-# Confirmation
-confirm-report-title-msg = Report this message?
-confirm-report-description-msg = Are you sure you want to report this message?
-confirm-report-msg-content-field-msg = 💬 Message Content
-confirm-report-msg-sent-field-msg = 📨 Sent
-confirm-report-msg-id-field-msg = 🆔 ID
-confirm-report-msg-attachments-field-msg = 📎 Attachments
-confirm-report-author-footer-msg = Author: { $tag } ({ $id })
+# Reporting
+report-confirm-title-msg = Report this message?
+report-confirm-description-msg = This report **will not** be tied to your account in any way.
+report-confirm-msg-content-field-msg = 💬 Message Content
+report-confirm-msg-sent-field-msg = 📨 Sent
+report-confirm-msg-id-field-msg = 🆔 ID
+report-confirm-msg-attachments-field-msg = 📎 Attachments
+report-confirm-author-footer-msg = Author: { $tag } ({ $id })
+report-submitted-title = Report submitted successfully.
+
+# Realms
+realms-set-channel = Successfully updated Realms voice channel.
+realms-channel-name = { $username }'s space
+realms-added-user = Added { $username } to space; they can now join.
 
 # Permissions
 permission-create-instant-invite = Create Invite

@@ -42,7 +42,7 @@ class UsernameCommand extends ChatCommand {
         }
 
         if (ctx.options.get("name")) {
-            name = ctx.options.get("name")?.attachment?.url as string;
+            name = ctx.options.get("name")?.value as any;
         } else if (ctx.options.get("use_guild_name")) {
             name = ctx.guild?.name as string;
         } else {

@@ -1,9 +1,9 @@
 import { APIApplicationCommandOption, APIMessage } from "discord-api-types/v10";
-import { BaseCommandInteraction, ContextMenuInteraction, Interaction, InteractionReplyOptions, Message, MessageContextMenuInteraction, PermissionFlags, Permissions } from "discord.js";
+import { BaseCommandInteraction, ButtonInteraction, ContextMenuInteraction, Interaction, InteractionReplyOptions, Message, MessageContextMenuInteraction, PermissionFlags, Permissions } from "discord.js";
 import { l10n, log } from "../main";
 import { replyWithError } from "../util/error";
 
-export type Ctx = BaseCommandInteraction & MessageContextMenuInteraction & ContextMenuInteraction;
+export type Ctx = BaseCommandInteraction & MessageContextMenuInteraction & ContextMenuInteraction & ButtonInteraction;
 
 enum CommandType {
     Chat = 1,
