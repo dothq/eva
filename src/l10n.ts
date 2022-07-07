@@ -15,7 +15,7 @@ class L10n {
         this.init();
     }
 
-    public t<K extends any>(ctx: Ctx, id: string, l10nCtx?: Record<string, FluentVariable>): K | any {
+    public locale(ctx: Ctx) {
         const supportedLocales = negotiateLanguages(
             [ctx.locale], // requested locales
             this.langs, // available locales
@@ -25,12 +25,22 @@ class L10n {
         const locale = supportedLocales[0];
 
         if (this.bundles.has(locale)) {
+            return locale;
+        } else {
+            return DEFAULT_LOCALE;
+        }
+    }
+
+    public t<K extends any>(ctx: Ctx, id: string, l10nCtx?: Record<string, any>): K | any {
+        const locale = this.locale(ctx);
+
+        if (this.bundles.has(locale)) {
             const bundle = this.bundles.get(locale) as FluentBundle;
 
             const l = bundle.getMessage(id);
 
             if (l && l.value) {
-                bundle.formatPattern(l.value, l10nCtx);
+                return bundle.formatPattern(l.value, l10nCtx);
             } else {
                 return id;
             }
