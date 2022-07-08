@@ -1,7 +1,7 @@
 import { REST } from "@discordjs/rest";
 import axios from "axios";
 import { Routes } from "discord-api-types/v10";
-import { CategoryChannel, CategoryChannelResolvable, Client, Intents, Interaction, MessageActionRow, MessageButton, MessageEmbed, Permissions } from "discord.js";
+import { CategoryChannel, CategoryChannelResolvable, Client, GuildManager, GuildMember, Intents, Interaction, MessageActionRow, MessageButton, MessageEmbed, Permissions, TextChannel, TextChannelResolvable, VoiceChannel } from "discord.js";
 import { config } from "dotenv"
 import { readdirSync } from "fs";
 import { glob } from "glob";
@@ -200,38 +200,62 @@ const main = async () => {
             const vcId = await settings.get("bot.realms.vc_channel");
             const categoryId = await settings.get("bot.realms.category_channel");
 
+            const creationPermissionOverride = (ownerId: any) => [
+                {
+                    id: state.guild.id,
+                    deny: [Permissions.FLAGS.CONNECT],
+                },
+                {
+                    id: ownerId,
+                    allow: [
+                        Permissions.FLAGS.CONNECT,
+                        Permissions.FLAGS.SEND_MESSAGES,
+                        Permissions.FLAGS.MOVE_MEMBERS,
+                        Permissions.FLAGS.MUTE_MEMBERS,
+                        Permissions.FLAGS.DEAFEN_MEMBERS
+                    ],
+                }
+            ];
+
             if (state.channelId == vcId) {
                 const category = await state.guild.channels.fetch(categoryId) as CategoryChannelResolvable;
 
                 const vc = await state.guild.channels.create(`${state.member?.user.username}'s space`, { 
                     parent: category,
                     type: "GUILD_VOICE",
-                    permissionOverwrites: [
-                        {
-                            id: state.guild.id,
-                            deny: [Permissions.FLAGS.CONNECT],
-                        },
-                        {
-                            id: state.member?.id as any,
-                            allow: [Permissions.FLAGS.CONNECT],
-                        }
-                    ]
+                    permissionOverwrites: creationPermissionOverride(state.member?.id)
                 });
 
                 await state.member?.voice.setChannel(vc, "Created personal realm");
 
-                const embed = new MessageEmbed()
+                const membersEmbed = new MessageEmbed()
                     .setColor(accentColour)
-                    .setTitle(`👥 Invite members using the /add command.`)
+                    .setTitle(`👥 Manage members using the /add and /remove command.`);
+
+                const accessEmbed = new MessageEmbed()
+                    .setColor(accentColour)
+                    .setTitle(`🔐 Change who can access your space using /access public/private.`);
 
                 vc.send({
                     content: `<@${state.member?.id}>`,
-                    embeds: [embed]
+                    embeds: [membersEmbed, accessEmbed]
                 });
             } else if (!state.channelId && oldstate.channel?.parentId == categoryId) {
-                try {
-                    await oldstate.channel?.delete();
-                } catch(e) {}
+                if (oldstate.channel?.members.size) {
+                    const members = oldstate.channel?.members;
+
+                    if (oldstate.channel.members.size == 1) {
+                        const newOwner = members.first() as GuildMember;
+
+                        await oldstate.channel.setName(`${newOwner.user.username}'s space`);
+                        await oldstate.channel.permissionOverwrites.set(creationPermissionOverride(newOwner.id));
+                    }
+                } else {
+                    try {
+                        await oldstate.channel?.delete();
+                        
+                    } catch(e) {}
+                }
             }
         });
 

@@ -6,10 +6,10 @@ import { accentColour, calculateDominantColour, l10n, settings } from "../../mai
 import { replyWithError } from "../../util/error";
 import { Permissions } from "../../util/permissions";
 
-class AddCommand extends ChatCommand {
+class RemoveCommand extends ChatCommand {
     public constructor() {
-        super("add", {
-            description: "👥 Add user to your space",
+        super("remove", {
+            description: "👥 Remove user from your space",
             args: [
                 {
                     name: "user",
@@ -25,8 +25,10 @@ class AddCommand extends ChatCommand {
         const { user } = ctx.options.get("user", true);
         if (!user) return;
 
+        const userMember = await ctx.guild?.members.fetch(user.id);
         const member = await ctx.guild?.members.fetch(ctx.user.id);
         if (!member) return;
+        if (!userMember) return;
 
         const voiceID = await settings.get("bot.realms.vc_channel");
         const categoryId = await settings.get("bot.realms.category_channel");
@@ -35,21 +37,20 @@ class AddCommand extends ChatCommand {
         if (!vc) return replyWithError(ctx, "realms-not-in-channel").send();
         if (vc.id == voiceID) return replyWithError(ctx, "realms-joined-realm-channel-meta-incorrect-usage").send();
         if (vc?.parentId !== categoryId) return replyWithError(ctx, "realms-not-in-channel").send();
-        if (!vc.permissionsFor(member).has("MOVE_MEMBERS")) return replyWithError(ctx, "realms-cant-add-user").send();
+
+        if (!userMember.voice.channel) return replyWithError(ctx, "realms-user-not-in-channel").send();
+        if (userMember.voice.channelId !== vc.id) return replyWithError(ctx, "realms-user-not-in-channel").send();
+        if (!vc.permissionsFor(member).has("MOVE_MEMBERS")) return replyWithError(ctx, "realms-cant-remove-user").send();
 
         await vc.permissionOverwrites.create(user, {
-            CONNECT: true
+            CONNECT: false
         });
+
+        await userMember.voice.disconnect();
 
         const embed = new MessageEmbed()
             .setColor(accentColour)
-            .setTitle("👍️ " + l10n.t(ctx, "realms-added-user", { username: user.username }));
-
-        const m = (vc as VoiceChannel).send({
-            content: `<@${user.id}>`
-        });
-
-        (await m).delete();
+            .setTitle("👍️ " + l10n.t(ctx, "realms-removed-user", { username: user.username }));
 
         ctx.reply({
             embeds: [embed],
@@ -58,4 +59,4 @@ class AddCommand extends ChatCommand {
     }
 }
 
-export default new AddCommand();
+export default new RemoveCommand();

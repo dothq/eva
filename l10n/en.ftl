@@ -33,6 +33,17 @@ report-submitted-title = Report submitted successfully.
 realms-set-channel = Successfully updated Realms channel settings.
 realms-channel-name = { $username }'s space
 realms-added-user = Added { $username } to space; they can now join.
+error-realms-not-in-channel = You aren't in this space; try joining.
+error-realms-user-not-in-channel = You aren't in a space right now.
+error-realms-cant-add-user = You don't have permission to add this user.
+error-realms-cant-remove-user = You don't have permission to remove this user.
+error-realms-access-unchanged-permission = You don't have permission to update this space's access.
+realms-removed-user = Removed { $username } from space.
+realms-changed-access = Your space is now { $state } to the public.
+realms-disconnected-no-permission = You were disconnected from { $name } because the space became private.
+realms-members-kicked-nobody = Nobody was removed as everyone is allowed to be in the space.
+realms-members-kicked-no-permission-on-access-change = The following members were kicked from your space because the space became private: { $list }.
+error-realms-joined-realm-channel-meta-incorrect-usage = You are unable to run that command here, try joining the voice channel instead.
 
 # Permissions
 permission-create-instant-invite = Create Invite
