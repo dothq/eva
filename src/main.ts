@@ -81,8 +81,8 @@ const main = async () => {
 
         log.info("Started registering application interactions...");
 
-        const commandFiles = glob.sync(resolve(__dirname, "commands", "**/*.ts").replace(/\\/g, '/')).filter(c => !c.endsWith("index.ts"));
-        const actionFiles = glob.sync(resolve(__dirname, "actions", "**/*.ts").replace(/\\/g, '/')).filter(c => !c.endsWith("index.ts"));
+        const commandFiles = glob.sync(resolve(__dirname, "commands", "**", "*.ts")).filter(c => !c.endsWith("index.ts"));
+        const actionFiles = glob.sync(resolve(__dirname, "actions", "**", "*.ts")).filter(c => !c.endsWith("index.ts"));
 
         const cmds: Command[] = [];
         const safeCmds: Command[] = [];
