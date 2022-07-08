@@ -2,7 +2,7 @@ import axios from "axios";
 import { ApplicationCommandOptionType } from "discord-api-types/v10";
 import { MessageEmbed, User, VoiceChannel } from "discord.js";
 import { ChatCommand, Ctx } from "..";
-import { accentColour, calculateDominantColour, l10n, realmCategoryId } from "../../main";
+import { accentColour, calculateDominantColour, l10n, settings } from "../../main";
 import { replyWithError } from "../../util/error";
 import { Permissions } from "../../util/permissions";
 
@@ -22,14 +22,17 @@ class AddCommand extends ChatCommand {
     }
 
     public async exec(ctx: Ctx) {
-        const { user }  = ctx.options.get("user", true);
+        const { user } = ctx.options.get("user", true);
         if (!user) return;
 
         const member = await ctx.guild?.members.fetch(ctx.user.id);
         if (!member) return;
 
+        const categoryId = await settings.get("bot.realms.category_channel");
+
         const vc = member.voice.channel;
-        if (vc?.parentId !== realmCategoryId) return;
+        if (!vc) return;
+        if (vc?.parentId !== categoryId) return;
 
         await vc.permissionOverwrites.create(user, {
             CONNECT: true

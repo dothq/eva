@@ -14,11 +14,9 @@ import { Command, Ctx } from "./commands";
 import L10n from "./l10n";
 import { replyWithError } from "./util/error";
 import fs from 'fs-extra';
+import Keyv from "keyv";
 
 export let accentColour: any = "#ffffff";
-
-export let realmVoiceChannelId: string = "";
-export let realmCategoryId: string = "";
 
 export const log = pino({
     transport: {
@@ -27,6 +25,11 @@ export const log = pino({
 });
 
 export const DEFAULT_AVATAR = "https://cdn.discordapp.com/embed/avatars/0.png";
+
+export const settings = new Keyv('sqlite://./settings.db', {
+    table: "settings",
+    busyTimeout: 10000
+});
 
 export const l10n = new L10n();
 
@@ -38,19 +41,23 @@ export const calculateDominantColour = async (client: Client) => {
     return accentColour = palette.Vibrant?.hex as string;
 }
 
-export const setRealmChannel = (chid: string, ctid: string) => {
-    realmVoiceChannelId = chid;
-    realmCategoryId = ctid;
+export const setRealmChannel = (channelid: string, categoryid: string) => {
+    settings.set("bot.realms.vc_channel", channelid);
+    settings.set("bot.realms.category_channel", categoryid);
 }
 
 const checkRealmCategoryForEmptyChannels = async (client: Client) => {
-    if (!realmCategoryId.length) return; 
+    if (!(await settings.get("bot.realms.vc_channel"))) return; 
+
+    const vcId = await settings.get("bot.realms.vc_channel");
 
     try {
-        const category = await client.channels.fetch(realmCategoryId) as CategoryChannel;
+        const categoryid = await settings.get("bot.realms.category_channel");
+
+        const category = await client.channels.fetch(categoryid) as CategoryChannel;
 
         category.children.forEach(async c => {
-            if (c.type == "GUILD_VOICE" && !c.members.size && c.deletable) {
+            if (c.type == "GUILD_VOICE" && !c.members.size && c.deletable && c.id !== vcId) {
                 try {
                     await c.delete();
                 } catch (e) {}
@@ -190,8 +197,11 @@ const main = async () => {
         client.on("voiceStateUpdate", async (oldstate, state) => {
             await checkRealmCategoryForEmptyChannels(client);
 
-            if (state.channelId == realmVoiceChannelId) {
-                const category = await state.guild.channels.fetch(realmCategoryId) as CategoryChannelResolvable;
+            const vcId = await settings.get("bot.realms.vc_channel");
+            const categoryId = await settings.get("bot.realms.category_channel");
+
+            if (state.channelId == vcId) {
+                const category = await state.guild.channels.fetch(categoryId) as CategoryChannelResolvable;
 
                 const vc = await state.guild.channels.create(`${state.member?.user.username}'s space`, { 
                     parent: category,
@@ -218,9 +228,9 @@ const main = async () => {
                     content: `<@${state.member?.id}>`,
                     embeds: [embed]
                 });
-            } else if (!state.channelId && oldstate.channel?.parentId == realmCategoryId) {
+            } else if (!state.channelId && oldstate.channel?.parentId == categoryId) {
                 try {
-                    await oldstate.channel.delete();
+                    await oldstate.channel?.delete();
                 } catch(e) {}
             }
         });

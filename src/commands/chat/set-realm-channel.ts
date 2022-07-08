@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ChannelType } from "discord-api-types/v10";
 import { MessageEmbed } from "discord.js";
 import { ChatCommand, Ctx } from "..";
-import { accentColour, l10n, realmVoiceChannelId, setRealmChannel } from "../../main";
+import { accentColour, l10n, setRealmChannel } from "../../main";
 import { replyWithError } from "../../util/error";
 import { Permissions } from "../../util/permissions";
 
@@ -37,7 +37,7 @@ class SetRealmChannelCommand extends ChatCommand {
 
         const embed = new MessageEmbed()
             .setColor(accentColour)
-            .setTitle("✅ " + l10n.t(ctx, "realms-set-channel", { id: realmVoiceChannelId }));
+            .setTitle("✅ " + l10n.t(ctx, "realms-set-channel"));
 
         ctx.reply({
             embeds: [embed],

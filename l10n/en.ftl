@@ -30,7 +30,7 @@ report-confirm-author-footer-msg = Author: { $tag } ({ $id })
 report-submitted-title = Report submitted successfully.
 
 # Realms
-realms-set-channel = Successfully updated Realms voice channel.
+realms-set-channel = Successfully updated Realms channel settings.
 realms-channel-name = { $username }'s space
 realms-added-user = Added { $username } to space; they can now join.
 
