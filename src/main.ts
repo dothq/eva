@@ -155,6 +155,10 @@ const main = async () => {
                     const act = actions.find(c => c.name == interaction.customId);
 
                     await act?.exec(interaction as any);
+                } else if (interaction.isSelectMenu()) {
+                    const menu = actions.find(c => c.name == interaction.customId);
+
+                    await menu?.exec(interaction as any);
                 }
             } catch(e: any) {
                 log.error(e.stack);

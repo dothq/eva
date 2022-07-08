@@ -1,4 +1,4 @@
-import { MessageActionRow, MessageButton, MessageEmbed, Modal, ModalActionRowComponent, TextInputComponent } from "discord.js";
+import { Message, MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu, Modal, ModalActionRowComponent, TextInputComponent } from "discord.js";
 import { Ctx, MessageCommand } from "..";
 import { accentColour, DEFAULT_AVATAR, l10n, log } from "../../main";
 import { replyWithError } from "../../util/error";
@@ -42,17 +42,45 @@ class ReportCommand extends MessageCommand {
             );
         }
 
-        const row = new MessageActionRow()
+        const reasonRow = new MessageActionRow()
             .addComponents(
-                new MessageButton()
-					.setCustomId("receive-report")
-					.setLabel("Send Report")
-					.setStyle("PRIMARY")
+                new MessageSelectMenu()
+                    .setCustomId("receive-report")
+                    .setPlaceholder('Select a reason')
+                    .addOptions([
+
+                        {
+                            label: "Reason 1",
+                            description: "Description for reason 1",
+                            value: "reason_1"
+                        },
+
+                        {
+                            label: "Reason 2",
+                            description: "Description for reason 2",
+                            value: "reason_2"
+                        },
+
+                        {
+                            label: "Other",
+                            description: "Description for other",
+                            value: "other_reason"
+                        }
+
+                    ]),
             )
+                    
+        // const submitRow = new MessageActionRow()
+        //     .addComponents(
+        //         new MessageButton()
+        //             .setCustomId("receive-report")
+        //             .setLabel("Send Report")
+        //             .setStyle("PRIMARY")
+        //     )
 
         ctx.reply({
             embeds: [embed],
-            components: [row],
+            components: [reasonRow],
             ephemeral: true
         })
     }
