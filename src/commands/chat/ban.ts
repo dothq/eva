@@ -6,12 +6,12 @@ import { accentColour, calculateDominantColour, l10n } from "../../main";
 import { replyWithError } from "../../util/error";
 import { Permissions } from "../../util/permissions";
 
-class AvatarCommand extends ChatCommand {
+class BanCommand extends ChatCommand {
     public constructor() {
-        super("avatar", {
-            description: "🖼️ Set the bot's avatar - (Administrative)",
+        super("ban", {
+            description: "🔨 Ban a user - (Administrative)",
             permissions: [
-                Permissions.MANAGE_GUILD
+                Permissions.BAN_MEMBERS
             ],
             args: [
                 {
@@ -39,11 +39,11 @@ class AvatarCommand extends ChatCommand {
 
         if (ctx.options.data.length > 1) {
             return replyWithError(
-                ctx,
-                "too-many-options-picked",
-                {
-                    optionSize: ctx.options.data.length,
-                    expectedOptionSize: 1
+                ctx, 
+                "too-many-options-picked", 
+                { 
+                    optionSize: ctx.options.data.length, 
+                    expectedOptionSize: 1 
                 }
             ).send();
         }
@@ -65,7 +65,7 @@ class AvatarCommand extends ChatCommand {
         try {
             const res = await axios.get(file_url, { responseType: "arraybuffer" });
             file_buffer = res.data;
-        } catch (e) {
+        } catch(e) {
             return replyWithError(ctx, "option-parse-failed").send();
         }
 
@@ -85,4 +85,4 @@ class AvatarCommand extends ChatCommand {
     }
 }
 
-export default new AvatarCommand();
+export default new BanCommand();

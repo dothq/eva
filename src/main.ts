@@ -15,6 +15,8 @@ import L10n from "./l10n";
 import { replyWithError } from "./util/error";
 import fs from 'fs-extra';
 import Keyv from "keyv";
+import e, { Express } from "express";
+import { sendSupportChannelOnboardEmbed } from "./commands/chat/create-support-channel";
 
 export let accentColour: any = "#ffffff";
 
@@ -66,10 +68,23 @@ const checkRealmCategoryForEmptyChannels = async (client: Client) => {
     } catch(e) {}
 }
 
+export const threadCreateEmbed = () => {
+    return new MessageEmbed()
+        .setTitle(`✅ Support thread created`)
+        .setDescription(`A thread has been created from your message.\n\nIf the thread name looks incorrect, you can rename it by typing \`/thread rename\`.\n\nOnce you're happy that your issue has been solved, type \`/thread close\` to close the thread.`)
+        .setColor(accentColour)
+}
+
 config();
 
+export let server: Express;
+
 const main = async () => {
-    const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES] });
+    const client = new Client({ intents: [
+        Intents.FLAGS.GUILDS, 
+        Intents.FLAGS.GUILD_VOICE_STATES,
+        Intents.FLAGS.GUILD_MESSAGES
+    ] });
     const rest = new REST({ version: "10" })
         .setToken(process.env.TOKEN as string);
 
@@ -158,14 +173,10 @@ const main = async () => {
                     const cmd = cmds.find(c => c.name == interaction.commandName);
 
                     await cmd?.handler(interaction as Ctx);
-                } else if (interaction.isButton()) {
-                    const act = actions.find(c => c.name == interaction.customId);
+                } else if (interaction.isButton() || interaction.isModalSubmit() || interaction.isSelectMenu()) {
+                    const act = actions.find(c => interaction.customId.startsWith(c.name));
 
                     await act?.exec(interaction as any);
-                } else if (interaction.isSelectMenu()) {
-                    const menu = actions.find(c => c.name == interaction.customId);
-
-                    await menu?.exec(interaction as any);
                 }
             } catch(e: any) {
                 log.error(e.stack);
@@ -259,6 +270,65 @@ const main = async () => {
             }
         });
 
+        client.on("messageCreate", async (msg) => {
+            const isSupportChannel = await settings.get(`bot.support_channels.${msg.channelId}`)
+
+            if (msg && isSupportChannel) {
+                if (!msg.content || !msg.content.length) {
+                    return;
+                }
+
+                if (msg.author.id == msg.client.user?.id) {
+                    return;
+                }
+
+                const channel = msg.channel as TextChannel;
+
+                const thread = await channel.threads.create({
+                    name: `❓️ ・ ${msg.cleanContent}`,
+                    startMessage: msg,
+                    autoArchiveDuration: "MAX"
+                });
+
+                const oldChannelPins = await channel.messages.fetchPinned();
+                const oldMsg = oldChannelPins.first() || undefined;
+
+                const row = new MessageActionRow()
+                    .addComponents(
+                        new MessageButton()
+                            .setCustomId("rename-thread")
+                            .setLabel("Rename Thread")
+                            .setEmoji("✏️")
+                            .setStyle("SECONDARY"),
+                        new MessageButton()
+                            .setCustomId("close-thread")
+                            .setLabel("Mark as solved")
+                            .setEmoji("✅")
+                            .setStyle("SECONDARY")
+                    )
+
+                await thread.send({
+                    embeds: [threadCreateEmbed()],
+                    components: [row]
+                });
+
+                setTimeout(async () => {
+                    await sendSupportChannelOnboardEmbed(channel, oldMsg);
+                }, 3000);
+            }
+        });
+
+        client.on("channelUpdate", async (oldchannel, newchannel) => {
+            const isSupportChannel = await settings.get(`bot.support_channels.${oldchannel.id}`);
+
+            if (isSupportChannel) {
+                const oldChannelPins = await (oldchannel as TextChannel).messages.fetchPinned();
+                const oldMsg = oldChannelPins.first() || undefined;
+
+                await sendSupportChannelOnboardEmbed(newchannel as TextChannel, oldMsg);
+            }
+        })
+
         setInterval(async () => {
             await checkRealmCategoryForEmptyChannels(client);
         }, 10000);
@@ -268,5 +338,13 @@ const main = async () => {
       
     client.login(process.env.TOKEN);
 }
+
+process.on("uncaughtException", (e) => {
+    log.error(e);
+})
+
+process.on("unhandledRejection", (e) => {
+    log.error(e);
+})
 
 main();

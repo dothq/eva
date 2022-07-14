@@ -1,11 +1,12 @@
 import { APIApplicationCommandOption, APIMessage } from "discord-api-types/v10";
-import { BaseCommandInteraction, ButtonInteraction, ContextMenuInteraction, Interaction, InteractionReplyOptions, Message, MessageContextMenuInteraction, PermissionFlags, Permissions } from "discord.js";
+import { BaseCommandInteraction, ButtonInteraction, ContextMenuInteraction, Interaction, InteractionReplyOptions, Message, MessageContextMenuInteraction, ModalSubmitInteraction, PermissionFlags, Permissions, Role, SelectMenuInteraction } from "discord.js";
 import { l10n, log } from "../main";
 import { replyWithError } from "../util/error";
+import { hasPermission } from "../util/permissions";
 
-export type Ctx = BaseCommandInteraction & MessageContextMenuInteraction & ContextMenuInteraction & ButtonInteraction;
+export type Ctx = BaseCommandInteraction & MessageContextMenuInteraction & ContextMenuInteraction & ButtonInteraction & ModalSubmitInteraction;
 
-enum CommandType {
+export enum CommandType {
     Chat = 1,
     User = 2,
     Message = 3
@@ -20,6 +21,7 @@ class Command {
     */
     public description!: string;
     public permissions: string[] = [];
+    public roles: Role[] = [];
     public args: APIApplicationCommandOption[] = [];
 
     public constructor(public type: CommandType, public name: string, public $commandInit?: Partial<Command>) {
@@ -31,37 +33,7 @@ class Command {
     }
 
     public async handler(ctx: Ctx) {
-        if (this.permissions && this.permissions.length) {
-            let hasPermission = false;
-
-            for (const permission of this.permissions) {
-                const bitflag = (Permissions.FLAGS as any)[permission];
-
-                if (ctx.memberPermissions?.has(bitflag)) {
-                    hasPermission = true;
-                    break;
-                }
-            }
-
-            if (!hasPermission) {
-                const isSingle = this.permissions.length == 1;
-
-                const toKebabCase = (t: string) => {
-                    return t.replace(/_/g, "-").toLowerCase();
-                }
-
-                const locale = l10n.locale(ctx);
-
-                const listFormatter = new Intl.ListFormat(locale, { style: "long", type: "disjunction" });
-                const permission = isSingle 
-                    ? l10n.t(ctx, `permission-${toKebabCase(this.permissions[0])}`)
-                    : listFormatter.format(this.permissions.map(p => l10n.t(ctx, `permission-${toKebabCase(p)}`)))
-
-                return replyWithError(ctx, `no-permission-${isSingle ? "single" : "multiple"}`, { 
-                    permission
-                }).send();
-            }
-        }
+        await hasPermission(ctx, this);
 
         return (this as any).exec(ctx);
     }
@@ -72,6 +44,7 @@ interface Command {
     name: string;
     description: string;
     permissions: string[];
+    roles: Role[];
     args: APIApplicationCommandOption[];
     
     exec(ctx: Ctx): Promise<void>;

@@ -13,7 +13,11 @@ error-option-parse-failed = Failed to parse option.
 error-no-permission-single = The { $permission } permission is required to use this command.
 error-no-permission-multiple = The { $permission } permissions are required to use this command.
 
+error-no-role = The { $role } permission is required to use this command.
+
 error-unknown-message = Unable to locate message.
+
+error-no-mod-role = No moderator role has been set.
 
 # Updates to identity
 updated-username-message = Successfully updated username to { $botname }.
@@ -28,6 +32,7 @@ report-confirm-msg-id-field-msg = 🆔 ID
 report-confirm-msg-attachments-field-msg = 📎 Attachments
 report-confirm-author-footer-msg = Author: { $tag } ({ $id })
 report-submitted-title = Report submitted successfully.
+error-report-message-not-reportable = This message is exempt from being reported.
 
 # Realms
 realms-set-channel = Successfully updated Realms channel settings.
@@ -44,6 +49,30 @@ realms-disconnected-no-permission = You were disconnected from { $name } because
 realms-members-kicked-nobody = Nobody was removed as everyone is allowed to be in the space.
 realms-members-kicked-no-permission-on-access-change = The following members were kicked from your space because the space became private: { $list }.
 error-realms-joined-realm-channel-meta-incorrect-usage = You are unable to run that command here, try joining the voice channel instead.
+
+# Projects
+projects-set-category = Successfully updated projects category settings.
+
+# Support
+support-updated-thread-title = Updated thread title.
+error-support-failed-thread-title-update = Failed to update thread title.
+error-support-not-valid-support-thread = Unable to close thread as it is not a valid support thread.
+support-thread-closed-feedback = Thread closed.
+support-thread-closed-feedback-description = Which user(s) helped you in solving your issue?
+support-thread-closed-feedback-select-option = Select user(s)...
+support-thread-closed-feedback-nobody = Nobody
+support-thread-closed-feedback-thanks = Thanks for the feedback.
+
+# Roles
+error-cannot-add-role-higher-than-current = You cannot add or remove this role as it is higher or the same level as your highest role.
+added-role-to-user = Added @{ $rolename } to { $user }.
+removed-role-from-user = Removed @{ $rolename } from { $user }.
+error-user-does-not-have-role = User does not have this role.
+error-user-already-has-role = User already has role.
+
+# 2FA
+error-2fa-not-setup = You have not set-up 2FA for this account yet. Run /setup-two-factor in chat to begin set-up.
+two-factor-authorised = Authorised this action; your session will expire in 2 minutes.
 
 # Permissions
 permission-create-instant-invite = Create Invite

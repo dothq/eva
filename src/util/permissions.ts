@@ -1,4 +1,7 @@
 import * as Discord from "discord.js"
+import { Ctx } from "../commands";
+import { l10n } from "../main";
+import { replyWithError } from "./error";
 
 export const Permissions: Record<keyof Discord.PermissionFlags, keyof Discord.PermissionFlags> = {
     "CREATE_INSTANT_INVITE": "CREATE_INSTANT_INVITE",
@@ -45,3 +48,69 @@ export const Permissions: Record<keyof Discord.PermissionFlags, keyof Discord.Pe
     "MODERATE_MEMBERS": "MODERATE_MEMBERS",
     "MANAGE_EVENTS": "MANAGE_EVENTS",
 };
+
+export const hasPermission = async (ctx: Ctx, options: { permissions?: string[], roles?: Discord.Role[] }) => {
+    return new Promise((resolve) => {
+        if (options.permissions && options.permissions.length) {
+            let hasPermission = false;
+    
+            for (const permission of options.permissions) {
+                const bitflag = (Discord.Permissions.FLAGS as any)[permission];
+    
+                if (ctx.memberPermissions?.has(bitflag)) {
+                    hasPermission = true;
+                    break;
+                }
+            }
+    
+            if (ctx.member?.user.id == ctx.guild?.ownerId) {
+                hasPermission = true;
+            }
+    
+            if (!hasPermission) {
+                const isSingle = options.permissions.length == 1;
+    
+                const toKebabCase = (t: string) => {
+                    return t.replace(/_/g, "-").toLowerCase();
+                }
+    
+                const locale = l10n.locale(ctx);
+    
+                const listFormatter = new Intl.ListFormat(locale, { style: "long", type: "disjunction" });
+                const permission = isSingle 
+                    ? l10n.t(ctx, `permission-${toKebabCase(options.permissions[0])}`)
+                    : listFormatter.format(options.permissions.map(p => l10n.t(ctx, `permission-${toKebabCase(p)}`)))
+    
+                replyWithError(ctx, `no-permission-${isSingle ? "single" : "multiple"}`, { 
+                    permission
+                }).send();
+
+                return resolve(true);
+            }
+        }
+    
+        if (options.roles && options.roles.length) {
+            let hasRole = false;
+    
+            for (const role of options.roles) {
+                if (role.members.has(ctx.member?.user.id as string)) {
+                    hasRole = true;
+                }
+            }
+    
+            if (ctx.member?.user.id == ctx.guild?.ownerId) {
+                hasRole = true;
+            }
+    
+            if (!hasRole) {
+                replyWithError(ctx, "no-role", { 
+                    role: options.roles[0].name
+                }).send();
+
+                return resolve(true);
+            }
+        }
+
+        return resolve(true);
+    })
+}

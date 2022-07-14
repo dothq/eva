@@ -17,6 +17,10 @@ class ReportCommand extends MessageCommand {
             return replyWithError(ctx, "unknown-message").send();
         }
 
+        if (msg.author.bot) {
+            return replyWithError(ctx, "report-message-not-reportable").send();
+        }
+
         const embed = new MessageEmbed()
             .setColor(accentColour)
             .setTitle(`❓ ${l10n.t(ctx, "report-confirm-title-msg")}`)
