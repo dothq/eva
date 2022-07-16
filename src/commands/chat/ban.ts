@@ -1,6 +1,9 @@
 import { ApplicationCommandOptionType } from "discord-api-types/v10";
 import type { GuildMember } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { ChatCommand, Ctx } from "..";
+import { accentColour, l10n } from "../../main";
+import { replyWithError } from "../../util/error";
 
 class BanCommand extends ChatCommand {
 	public constructor() {
