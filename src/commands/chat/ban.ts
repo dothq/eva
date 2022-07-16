@@ -27,7 +27,26 @@ class BanCommand extends ChatCommand {
 			?.members.cache.get(
 				ctx.options.get("user")?.value as string
 			) as GuildMember;
-		member?.ban();
+
+		if (ctx.options.get("user")?.value === ctx.user.id) {
+			return replyWithError(ctx, "cannot-ban-self").send();
+		} else if (ctx.options.get("user")?.value === ctx.client.user?.id) {
+			return replyWithError(ctx, "cannot-ban-bot").send();
+		}
+
+		try {
+			member?.ban();
+		} catch (err) {
+			return replyWithError(ctx, "ban-failed-unknown").send();
+		}
+
+		const embed = new MessageEmbed().setColor(accentColour).setTitle(
+			"✅ " +
+				l10n.t(ctx, "ban-success", {
+					user: member?.user?.tag,
+					reason: ctx.options.get("reason")?.value,
+				})
+		);
 	}
 }
 
