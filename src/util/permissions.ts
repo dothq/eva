@@ -85,7 +85,7 @@ export const hasPermission = async (ctx: Ctx, options: { permissions?: string[],
                     permission
                 }).send();
 
-                return resolve(true);
+                return resolve(false);
             }
         }
     
@@ -107,7 +107,7 @@ export const hasPermission = async (ctx: Ctx, options: { permissions?: string[],
                     role: options.roles[0].name
                 }).send();
 
-                return resolve(true);
+                return resolve(false);
             }
         }
 
