@@ -1,12 +1,15 @@
 import { ApplicationCommandOptionType } from "discord-api-types/v10";
 import { TextChannel } from "discord.js";
 import { ChatCommand, Ctx } from "..";
+import { Permissions } from "../../util/permissions";
 
 class PurgeCommand extends ChatCommand {
 	public constructor() {
 		super("purge", {
 			description: "🔥 Purge messages - (Administrative)",
-			roles: [],
+            permissions: [
+                Permissions.MANAGE_MESSAGES
+            ],
 			args: [
 				{
 					name: "number_of_messages",
