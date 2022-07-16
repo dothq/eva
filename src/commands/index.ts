@@ -33,7 +33,8 @@ class Command {
     }
 
     public async handler(ctx: Ctx) {
-        await hasPermission(ctx, this);
+        const hasPerm = await hasPermission(ctx, this);
+        if (!hasPerm) return;
 
         return (this as any).exec(ctx);
     }
