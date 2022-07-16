@@ -52,6 +52,11 @@ class BanCommand extends ChatCommand {
 					reason: ctx.options.get("reason")?.value,
 				})
 		);
+		
+		return ctx.reply({
+			embeds: [embed],
+			ephemeral: true,
+		});
 	}
 }
 
