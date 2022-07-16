@@ -74,6 +74,9 @@ error-user-already-has-role = User already has role.
 error-2fa-not-setup = You have not set-up 2FA for this account yet. Run /setup-two-factor in chat to begin set-up.
 two-factor-authorised = Authorised this action; your session will expire in 2 minutes.
 
+# Purging messages
+purged-chat-messages = Purged { $count } messages.
+
 # Permissions
 permission-create-instant-invite = Create Invite
 permission-kick-members = Kick Members

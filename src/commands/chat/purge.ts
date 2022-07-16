@@ -1,6 +1,8 @@
 import { ApplicationCommandOptionType } from "discord-api-types/v10";
-import { TextChannel } from "discord.js";
+import { MessageEmbed } from "discord.js";
+import type { TextChannel } from "discord.js";
 import { ChatCommand, Ctx } from "..";
+import { accentColour, l10n } from "../../main";
 import { Permissions } from "../../util/permissions";
 
 class PurgeCommand extends ChatCommand {
@@ -44,8 +46,13 @@ class PurgeCommand extends ChatCommand {
 			ctx.channelId
 		)) as TextChannel;
 		channel.bulkDelete(messageAmount);
+
+        const embed = new MessageEmbed()
+            .setColor(accentColour)
+            .setTitle("✅ " + l10n.t(ctx, "purged-chat-messages", { count: messageAmount }))
+
 		ctx.reply({
-			content: `🔥 Purged ${messageAmount} messages`,
+            embeds: [embed],
 			ephemeral: true,
 		});
 	}
