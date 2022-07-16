@@ -77,6 +77,14 @@ two-factor-authorised = Authorised this action; your session will expire in 2 mi
 # Purging messages
 purged-chat-messages = Purged { $count } messages.
 
+# Banning & Kicking
+cannot-ban-self = You cannot ban yourself.
+cannot-kick-self = You cannot kick yourself.
+cannot-ban-bot = You cannot ban the bot.
+cannot-kick-bot = You cannot kick the bot.
+ban-success = Banned { $user } with reason { $reason }.
+kick-success = Kicked { $user } with reason { $reason }.
+
 # Permissions
 permission-create-instant-invite = Create Invite
 permission-kick-members = Kick Members
