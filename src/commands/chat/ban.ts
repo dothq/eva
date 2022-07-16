@@ -14,11 +14,13 @@ class BanCommand extends ChatCommand {
 					name: "user",
 					description: "User",
 					type: ApplicationCommandOptionType.User,
+					required: true,
 				},
 				{
 					name: "reason",
 					description: "Reason",
 					type: ApplicationCommandOptionType.String,
+					required: true,
 				},
 			],
 		});
