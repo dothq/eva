@@ -30,20 +30,20 @@ class BanCommand extends ChatCommand {
 	public async exec(ctx: Ctx) {
 		const modRoleId = await settings.get("bot.moderation.role");
 
-        if (!modRoleId) {
-            return replyWithError(ctx, "no-mod-role").send();
-        }
+		if (!modRoleId) {
+			return replyWithError(ctx, "no-mod-role").send();
+		}
 
-        const modRole = await ctx.guild?.roles.fetch(modRoleId);
+		const modRole = await ctx.guild?.roles.fetch(modRoleId);
 
-        if (!modRole) {
-            return replyWithError(ctx, "no-mod-role").send();
-        }
+		if (!modRole) {
+			return replyWithError(ctx, "no-mod-role").send();
+		}
 
-        await hasPermission(ctx, {
-            roles: [modRole]
-        });
-		
+		await hasPermission(ctx, {
+			roles: [modRole],
+		});
+
 		const member = ctx.client.guilds.cache
 			.get(ctx.guild?.id as string)
 			?.members.cache.get(
@@ -57,7 +57,9 @@ class BanCommand extends ChatCommand {
 		}
 
 		try {
-			member?.ban();
+			member?.ban({
+				reason: ctx.options.get("reason")?.value as string,
+			});
 		} catch (err) {
 			return replyWithError(ctx, "ban-failed-unknown").send();
 		}
@@ -69,7 +71,7 @@ class BanCommand extends ChatCommand {
 					reason: ctx.options.get("reason")?.value,
 				})
 		);
-		
+
 		return ctx.reply({
 			embeds: [embed],
 			ephemeral: true,
