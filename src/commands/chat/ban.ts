@@ -2,8 +2,9 @@ import { ApplicationCommandOptionType } from "discord-api-types/v10";
 import type { GuildMember } from "discord.js";
 import { MessageEmbed } from "discord.js";
 import { ChatCommand, Ctx } from "..";
-import { accentColour, l10n } from "../../main";
+import { accentColour, l10n, settings } from "../../main";
 import { replyWithError } from "../../util/error";
+import { hasPermission } from "../../util/permissions";
 
 class BanCommand extends ChatCommand {
 	public constructor() {
@@ -27,6 +28,22 @@ class BanCommand extends ChatCommand {
 	}
 
 	public async exec(ctx: Ctx) {
+		const modRoleId = await settings.get("bot.moderation.role");
+
+        if (!modRoleId) {
+            return replyWithError(ctx, "no-mod-role").send();
+        }
+
+        const modRole = await ctx.guild?.roles.fetch(modRoleId);
+
+        if (!modRole) {
+            return replyWithError(ctx, "no-mod-role").send();
+        }
+
+        await hasPermission(ctx, {
+            roles: [modRole]
+        });
+		
 		const member = ctx.client.guilds.cache
 			.get(ctx.guild?.id as string)
 			?.members.cache.get(
