@@ -51,23 +51,24 @@ export const Permissions: Record<keyof Discord.PermissionFlags, keyof Discord.Pe
 
 export const hasPermission = async (ctx: Ctx, options: { permissions?: string[], roles?: Discord.Role[] }) => {
     return new Promise((resolve) => {
-        if (options.permissions && options.permissions.length) {
-            let hasPermission = false;
-    
+        let hasPerm = false;
+        let hasRole = false;
+
+        if (options.permissions && options.permissions.length) {    
             for (const permission of options.permissions) {
                 const bitflag = (Discord.Permissions.FLAGS as any)[permission];
     
                 if (ctx.memberPermissions?.has(bitflag)) {
-                    hasPermission = true;
+                    hasPerm = true;
                     break;
                 }
             }
     
             if (ctx.member?.user.id == ctx.guild?.ownerId) {
-                hasPermission = true;
+                hasPerm = true;
             }
     
-            if (!hasPermission) {
+            if (!hasPerm) {
                 const isSingle = options.permissions.length == 1;
     
                 const toKebabCase = (t: string) => {
@@ -90,8 +91,6 @@ export const hasPermission = async (ctx: Ctx, options: { permissions?: string[],
         }
     
         if (options.roles && options.roles.length) {
-            let hasRole = false;
-    
             for (const role of options.roles) {
                 if (role.members.has(ctx.member?.user.id as string)) {
                     hasRole = true;
@@ -111,6 +110,6 @@ export const hasPermission = async (ctx: Ctx, options: { permissions?: string[],
             }
         }
 
-        return resolve(true);
+        return resolve(hasPerm || hasRole);
     })
 }
