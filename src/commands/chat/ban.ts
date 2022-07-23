@@ -3,6 +3,7 @@ import type { GuildMember } from "discord.js";
 import { MessageEmbed } from "discord.js";
 import { ChatCommand, Ctx } from "..";
 import { accentColour, l10n, settings } from "../../main";
+import { require2FA } from "../../util/2fa";
 import { replyWithError } from "../../util/error";
 import { hasPermission } from "../../util/permissions";
 
@@ -44,6 +45,8 @@ class BanCommand extends ChatCommand {
 		await hasPermission(ctx, {
 			roles: [modRole],
 		});
+
+        await require2FA(ctx);
 
 		const member = ctx.client.guilds.cache
 			.get(ctx.guild?.id as string)

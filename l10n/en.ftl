@@ -76,6 +76,7 @@ two-factor-authorised = Authorised this action; your session will expire in 2 mi
 
 # Purging messages
 purged-chat-messages = Purged { $count } messages.
+purged-msgs-log = View messages log
 
 # Banning & Kicking
 cannot-ban-self = You cannot ban yourself.

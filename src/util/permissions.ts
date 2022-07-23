@@ -51,10 +51,12 @@ export const Permissions: Record<keyof Discord.PermissionFlags, keyof Discord.Pe
 
 export const hasPermission = async (ctx: Ctx, options: { permissions?: string[], roles?: Discord.Role[] }) => {
     return new Promise((resolve) => {
-        let hasPerm = false;
-        let hasRole = false;
+        let hasPerm = true;
+        let hasRole = true;
 
-        if (options.permissions && options.permissions.length) {    
+        if (options.permissions && options.permissions.length) {
+            hasPerm = false;
+
             for (const permission of options.permissions) {
                 const bitflag = (Discord.Permissions.FLAGS as any)[permission];
     
@@ -91,6 +93,8 @@ export const hasPermission = async (ctx: Ctx, options: { permissions?: string[],
         }
     
         if (options.roles && options.roles.length) {
+            hasRole = false;
+
             for (const role of options.roles) {
                 if (role.members.has(ctx.member?.user.id as string)) {
                     hasRole = true;

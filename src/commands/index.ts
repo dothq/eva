@@ -1,5 +1,5 @@
 import { APIApplicationCommandOption, APIMessage } from "discord-api-types/v10";
-import { BaseCommandInteraction, ButtonInteraction, ContextMenuInteraction, Interaction, InteractionReplyOptions, Message, MessageContextMenuInteraction, ModalSubmitInteraction, PermissionFlags, Permissions, Role, SelectMenuInteraction } from "discord.js";
+import { ApplicationCommandAutocompleteOption, ApplicationCommandOptionChoiceData, BaseCommandInteraction, ButtonInteraction, ContextMenuInteraction, Interaction, InteractionReplyOptions, Message, MessageContextMenuInteraction, ModalSubmitInteraction, PermissionFlags, Permissions, Role, SelectMenuInteraction } from "discord.js";
 import { l10n, log } from "../main";
 import { replyWithError } from "../util/error";
 import { hasPermission } from "../util/permissions";
@@ -12,6 +12,11 @@ export enum CommandType {
     Message = 3
 }
 
+type Arg = {
+    autocomplete?: boolean;
+    choices?: ApplicationCommandOptionChoiceData[]
+} & APIApplicationCommandOption;
+
 class Command {
     /* 
         Any new fields added that aren't apart of the Discord API 
@@ -22,7 +27,7 @@ class Command {
     public description!: string;
     public permissions: string[] = [];
     public roles: Role[] = [];
-    public args: APIApplicationCommandOption[] = [];
+    public args: Arg[] = [];
 
     public constructor(public type: CommandType, public name: string, public $commandInit?: Partial<Command>) {
         if ($commandInit) {
@@ -46,7 +51,7 @@ interface Command {
     description: string;
     permissions: string[];
     roles: Role[];
-    args: APIApplicationCommandOption[];
+    args: Arg[];
     
     exec(ctx: Ctx): Promise<void>;
 }
