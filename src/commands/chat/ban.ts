@@ -10,6 +10,7 @@ class BanCommand extends ChatCommand {
 	public constructor() {
 		super("ban", {
 			description: "🔨 Ban a user - (Administrative)",
+			permissions: ["BAN_MEMBERS"],
 			args: [
 				{
 					name: "user",

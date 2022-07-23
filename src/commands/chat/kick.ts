@@ -10,6 +10,7 @@ class KickCommand extends ChatCommand {
 	public constructor() {
 		super("kick", {
 			description: "🔨 Kick a user - (Administrative)",
+			permissions: ["KICK_MEMBERS"],
 			args: [
 				{
 					name: "user",
