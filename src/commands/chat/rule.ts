@@ -115,7 +115,12 @@ class RuleCommand extends ChatCommand {
 
 				const addedEmbed = new MessageEmbed()
 					.setColor(accentColour)
-					.setTitle("✅ " + l10n.t(ctx, "rule-add-success"));
+					.setTitle(
+						"✅ " +
+							l10n.t(ctx, "rules-added", {
+								rule: ruleName,
+							})
+					);
 
 				await ctx.reply({ embeds: [addedEmbed], ephemeral: true });
 
@@ -143,7 +148,12 @@ class RuleCommand extends ChatCommand {
 
 				const removedEmbed = new MessageEmbed()
 					.setColor(accentColour)
-					.setTitle("✅ " + l10n.t(ctx, "rule-remove-success"));
+					.setTitle(
+						"✅ " +
+							l10n.t(ctx, "rules-removed", {
+								rule: ruleName,
+							})
+					);
 
 				await ctx.reply({ embeds: [removedEmbed], ephemeral: true });
 
@@ -190,7 +200,12 @@ class RuleCommand extends ChatCommand {
 
 				const editedEmbed = new MessageEmbed()
 					.setColor(accentColour)
-					.setTitle("✅ " + l10n.t(ctx, "rule-edit-success"));
+					.setTitle(
+						"✅ " +
+							l10n.t(ctx, "rules-edited", {
+								rule: ruleName,
+							})
+					);
 
 				await ctx.reply({ embeds: [editedEmbed], ephemeral: true });
 

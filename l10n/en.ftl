@@ -87,8 +87,15 @@ ban-success = Banned { $user } with reason { $reason }.
 kick-success = Kicked { $user } with reason { $reason }.
 
 # Rules
-rules-added = Added new rule "{ $id }"
-rules-removed = Removed rule "{ $id }"
+rules-added = Added new rule "{ $rule }"
+rules-removed = Removed rule "{ $rule }"
+rules-edited = Updated rule "{ $rule }"
+
+no-rules-channel = No rules channel has been set.
+missing-rule-info = Please provide a rule ID, name, and description.
+missing-rule-id = Please provide a rule ID.
+rule-not-found = Rule not found. Create it with /rule add.
+
 
 # Permissions
 permission-create-instant-invite = Create Invite
