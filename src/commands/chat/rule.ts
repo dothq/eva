@@ -33,6 +33,7 @@ class RuleCommand extends ChatCommand {
 	public constructor() {
 		super("rule", {
 			description: "Rule",
+            permissions: ["MANAGE_GUILD"],
 			args: [
 				{
 					name: "add",
