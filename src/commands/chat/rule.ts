@@ -50,7 +50,7 @@ class RuleCommand extends ChatCommand {
 					name: "edit",
 					description: "✏️ Edit a rule",
 					type: 1,
-					options: [ruleManagementOptions[0]],
+					options: ruleManagementOptions,
 				},
 				{
 					name: "list",
@@ -146,6 +146,53 @@ class RuleCommand extends ChatCommand {
 					.setTitle("✅ " + l10n.t(ctx, "rule-remove-success"));
 
 				await ctx.reply({ embeds: [removedEmbed], ephemeral: true });
+
+				break;
+
+			case "edit":
+				const ruleIDToEdit = ctx.options.get("id", true).value;
+
+				if (!ruleIDToEdit)
+					return replyWithError(ctx, "missing-rule-id").send();
+
+				const ruleToEdit = await settings.get(
+					`bot.moderation.rules.${ruleIDToEdit}`
+				);
+
+				if (!ruleToEdit)
+					return replyWithError(ctx, "rule-not-found").send();
+
+				const newRuleName = ctx.options.get("name", true).value;
+				const newRuleDescription = ctx.options.get(
+					"description",
+					true
+				).value;
+
+				if (!newRuleName || !newRuleDescription)
+					return replyWithError(ctx, "missing-rule-info").send();
+
+				const newRuleEmbed = new MessageEmbed()
+					.setColor(accentColour)
+					.setTitle(newRuleName as string)
+					.setDescription(newRuleDescription as string);
+
+				const messageEdit = await (
+					ctx.client.channels.cache.get(rulesChannel) as TextChannel
+				)?.messages.fetch(ruleToEdit.messageID);
+
+				await messageEdit?.edit({ embeds: [newRuleEmbed] });
+
+				await settings.set(`bot.moderation.rules.${ruleIDToEdit}`, {
+					name: newRuleName,
+					description: newRuleDescription,
+					messageID: messageEdit?.id,
+				});
+
+				const editedEmbed = new MessageEmbed()
+					.setColor(accentColour)
+					.setTitle("✅ " + l10n.t(ctx, "rule-edit-success"));
+
+				await ctx.reply({ embeds: [editedEmbed], ephemeral: true });
 
 				break;
 
