@@ -4,6 +4,7 @@ import { Permissions } from "../../util/permissions";
 import vm from "vm";
 import { inspect } from "util";
 import { MessageAttachment } from "discord.js";
+import * as main from "../../main";
 
 class EvalCommand extends ChatCommand {
     public constructor() {
@@ -28,6 +29,18 @@ class EvalCommand extends ChatCommand {
         });
     }
 
+    public async sanitise(text: any) {
+        if (text && text.constructor.name == "Promise") text = await text;
+
+        if (typeof text !== "string") text = inspect(text, { depth: 1 });
+
+        text = text
+            .replace(/`/g, "`" + String.fromCharCode(8203))
+            .replace(/@/g, "@" + String.fromCharCode(8203));
+
+        return text;
+    }
+
     public async exec(ctx: Ctx) {
         const { value: code } = ctx.options.get("code", true);
         if (!code) return;
@@ -41,9 +54,12 @@ class EvalCommand extends ChatCommand {
             ctx.channel?.send(data);
         }
 
+        const bot = ctx.client;
+        const settings = main.settings;
+
         try {
             const result = eval(code as string);
-            const clean = inspect(result);
+            const clean = await this.sanitise(result);
 
             if (clean.length >= 1980) {
                 const attachment = new MessageAttachment(Buffer.from(clean), "eval.js");
@@ -54,7 +70,7 @@ class EvalCommand extends ChatCommand {
                 });
             } else {
                 ctx.reply({
-                    content: `\`\`\`xl\n${clean}\`\`\``,
+                    content: `\`\`\`js\n${clean}\`\`\``,
                     ephemeral: isEphemeral
                 });
             }

@@ -71,7 +71,10 @@ class StrikeCommand extends ChatCommand {
 	}
 
 	public async exec(ctx: Ctx) {
+        const { user } = ctx.options.get("user", true);
+        const { value: reason } = ctx.options.get("reason", true);
 
+        console.log(user, reason);
 	}
 }
 

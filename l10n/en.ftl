@@ -86,6 +86,10 @@ cannot-kick-bot = You cannot kick the bot.
 ban-success = Banned { $user } with reason { $reason }.
 kick-success = Kicked { $user } with reason { $reason }.
 
+# Rules
+rules-added = Added new rule "{ $id }"
+rules-removed = Removed rule "{ $id }"
+
 # Permissions
 permission-create-instant-invite = Create Invite
 permission-kick-members = Kick Members

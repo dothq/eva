@@ -9,7 +9,7 @@ class TwoFactorModalAction extends Action {
         super("two-factor-modal");
     }
 
-    public async exec(ctx: Ctx) {
+    public async exec(ctx: Ctx, callback?: (ctx: Ctx) => void) {
         switch (ctx.type) {
             case "APPLICATION_COMMAND":
             case "MESSAGE_COMPONENT":
@@ -39,17 +39,9 @@ class TwoFactorModalAction extends Action {
                 });
 
                 if (verified) {
-                    await settings.set(`bot.sessions.${ctx.user.id}`, possibleCode, Date.now() + (60 * 1000 * 2));
+                    await settings.set(`bot.otpsessions.${ctx.user.id}`, Date.now() + (60 * 1000 * 5));
 
-                    try {
-                        if (ctx.components[0].components[0].customId == "two-factor-code") {
-                            ctx.update({
-                                content: `Successfully setup two-factor authentication for this device.`,
-                                files: [],
-                                components: []
-                            })
-                        }
-                    } catch(e) {}
+                    if (callback) await callback(ctx);
                 } else {
                     const row = new MessageActionRow()
                         .addComponents(

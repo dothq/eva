@@ -28,10 +28,54 @@ export const log = pino({
 
 export const DEFAULT_AVATAR = "https://cdn.discordapp.com/embed/avatars/0.png";
 
-export const settings = new Keyv('sqlite://./settings.db', {
+let keyv = new Keyv('sqlite://./settings.db', {
     table: "settings",
     busyTimeout: 10000
 });
+
+export const settings = keyv as {
+    push: (key: string, value: any) => Promise<true>,
+    pop: (key: string, index: number) => Promise<true>,
+    findIndex: (key: string, predicate: any) => Promise<number>
+} & typeof keyv;
+
+settings.push = async (key: string, value: any) => {
+    const v = await settings.get(key);
+
+    if (Array.isArray(v)) {
+        await settings.set(key, [...v, value]);
+
+        return true;
+    } else if (v == undefined) {
+        await settings.set(key, [value]);
+
+        return true;
+    } else {
+        return undefined as any;
+    }
+};
+
+settings.pop = async (key: string, index: number) => {
+    const v = await settings.get(key);
+
+    if (Array.isArray(v)) {
+        await settings.set(key, v.filter((_, i) => i !== index));
+
+        return true;
+    } else {
+        return undefined as any;
+    }
+};
+
+settings.findIndex = async (key: string, predicate: (value: any, index: number, obj: any[]) => unknown) => {
+    const v = await settings.get(key);
+
+    if (Array.isArray(v)) {
+        return v.findIndex(predicate)
+    } else {
+        return undefined as any;
+    }
+};
 
 export const l10n = new L10n();
 
