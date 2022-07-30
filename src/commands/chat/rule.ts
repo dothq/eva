@@ -99,13 +99,13 @@ class RuleCommand extends ChatCommand {
 
 				if (!ruleID || !ruleName || !ruleDescription)
 					return replyWithError(ctx, "missing-rule-info").send();
-				let embed = new MessageEmbed()
+				const ruleEmbed = new MessageEmbed()
 					.setColor(accentColour)
 					.setTitle(ruleName as string)
 					.setDescription(ruleDescription as string);
 				const message = await (
 					ctx.client.channels.cache.get(rulesChannel) as TextChannel
-				)?.send({ embeds: [embed] });
+				)?.send({ embeds: [ruleEmbed] });
 
 				await settings.set(`bot.moderation.rules.${ruleID}`, {
 					name: ruleName,
@@ -113,15 +113,40 @@ class RuleCommand extends ChatCommand {
 					messageID: message.id,
 				});
 
-				embed = new MessageEmbed()
+				const addedEmbed = new MessageEmbed()
 					.setColor(accentColour)
 					.setTitle("✅ " + l10n.t(ctx, "rule-add-success"));
 
-				await ctx.reply({ embeds: [embed], ephemeral: true });
+				await ctx.reply({ embeds: [addedEmbed], ephemeral: true });
 
 				break;
 
 			case "remove":
+				const ruleIDToRemove = ctx.options.get("id", true).value;
+
+				if (!ruleIDToRemove)
+					return replyWithError(ctx, "missing-rule-id").send();
+
+				const rule = await settings.get(
+					`bot.moderation.rules.${ruleIDToRemove}`
+				);
+
+				if (!rule) return replyWithError(ctx, "rule-not-found").send();
+
+				await settings.delete(`bot.moderation.rules.${ruleIDToRemove}`);
+
+				const messageToDelete = await (
+					ctx.client.channels.cache.get(rulesChannel) as TextChannel
+				)?.messages.fetch(rule.messageID);
+
+				messageToDelete?.delete();
+
+				const removedEmbed = new MessageEmbed()
+					.setColor(accentColour)
+					.setTitle("✅ " + l10n.t(ctx, "rule-remove-success"));
+
+				await ctx.reply({ embeds: [removedEmbed], ephemeral: true });
+
 				break;
 
 			default:
